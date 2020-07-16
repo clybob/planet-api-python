@@ -20,4 +20,6 @@ class TestPlanetsView(unittest.TestCase):
         self.response = self.test_app.get('/planets')
         self.assertEqual(self.response.status_code, 200)
 
-
+    def test_get_planets_should_return_json(self):
+        self.response = self.test_app.get('/planets')
+        self.assertIn(self.response.content_type, 'application/json')
