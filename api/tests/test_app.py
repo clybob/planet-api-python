@@ -84,6 +84,22 @@ class TestPlanetsView(unittest.TestCase):
             }]
         })
 
+    def test_get_planets_should_return_filtered_planets_by_id(self):
+        response = self._get_planets(search=self.planet2.id)
+        data = json.loads(response.get_data(as_text=True))
+
+        self.assertEqual(data, {
+            'count': 1,
+            'next': None,
+            'previous': None,
+            'results': [{
+                'name': self.planet2.name,
+                'climate': self.planet2.climate,
+                'terrain': self.planet2.terrain,
+                'films_count': 2
+            }]
+        })
+
     def _install_fixtures(self):
         self.planet1 = Planet(name='Tatooine', climate='arid', terrain='desert')
         self.planet2 = Planet(name='Alderaan', climate='temperate', terrain='grasslands, mountains')

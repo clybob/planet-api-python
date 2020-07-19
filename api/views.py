@@ -1,6 +1,5 @@
 from flask import jsonify, request
 
-
 from api.app import app
 from api.models import Planet
 from api.swapi import Swapi
@@ -12,7 +11,12 @@ def planets():
     results = []
 
     if search:
-        planets = Planet.query.filter_by(name=search)
+        planet_id = get_id_from_search(search)
+
+        if planet_id:
+            planets = Planet.query.filter_by(id=planet_id)
+        else:
+            planets = Planet.query.filter_by(name=search)
     else:
         planets = Planet.query.all()
 
@@ -30,3 +34,12 @@ def planets():
         previous=None,
         results=results
     )
+
+
+def get_id_from_search(search):
+    try:
+        planet_id = int(search)
+    except ValueError:
+        planet_id = None
+
+    return planet_id
