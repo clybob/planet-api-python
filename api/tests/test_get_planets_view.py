@@ -7,19 +7,6 @@ from api.app import app
 from api.models import Planet, db
 
 
-class TestBasePlanetsView(unittest.TestCase):
-    url = '/planets/'
-    test_app = app.test_client()
-
-    def test_put_planets_should_return_not_implemented(self):
-        response = self.test_app.put(self.url)
-        self.assertEqual(response.status_code, 405)
-
-    def test_delete_planets_should_return_not_implemented(self):
-        response = self.test_app.delete(self.url)
-        self.assertEqual(response.status_code, 405)
-
-
 class TestGetPlanetsView(unittest.TestCase):
     maxDiff = 1000
 
@@ -117,7 +104,7 @@ class TestGetPlanetsView(unittest.TestCase):
         Planet.query.delete()
 
     @patch('api.swapi.Swapi.get_planet_films')
-    def _get_planets(self, mock, search=None,):
+    def _get_planets(self, mock, search=None):
         mock.return_value = self._fake_get_planet_films()
         url = '/planets/'
 

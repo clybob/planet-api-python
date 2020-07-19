@@ -1,12 +1,12 @@
-from flask import jsonify, request
+from flask import jsonify, request, Response
 
 from api.app import app
 from api.models import Planet
 from api.swapi import Swapi
 
 
-@app.route('/planets/', methods=['GET', 'POST'])
-def planets():
+@app.route('/planets/', methods=['GET'])
+def get_planets():
     search = request.args.get('search')
     results = []
 
@@ -34,6 +34,11 @@ def planets():
         previous=None,
         results=results
     )
+
+
+@app.route('/planets/', methods=['POST'])
+def post_planets():
+    return Response("", status=201, mimetype='application/json')
 
 
 def get_id_from_search(search):
