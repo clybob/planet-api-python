@@ -23,7 +23,7 @@ class TestGetPlanetsView(unittest.TestCase):
 
     def test_get_planets_should_return_json(self):
         response = self._get_planets()
-        self.assertIn(response.content_type, 'application/json')
+        self.assertEqual(response.content_type, 'application/json')
 
     def test_get_planets_should_return_a_list_of_planets(self):
         response = self._get_planets()

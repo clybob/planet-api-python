@@ -1,3 +1,4 @@
+import json
 import unittest
 
 from api.app import app
@@ -25,7 +26,7 @@ class TestPostPlanetsView(unittest.TestCase):
 
     def test_post_planets_should_return_json(self):
         response = self._post_planets(self.planet)
-        self.assertIn(response.content_type, 'application/json')
+        self.assertEqual(response.content_type, 'application/json')
 
     def test_post_planets_should_save_planet_on_db(self):
         self._post_planets(self.planet)
@@ -34,6 +35,19 @@ class TestPostPlanetsView(unittest.TestCase):
         self.assertEqual(test_planet.name, 'test')
         self.assertEqual(test_planet.terrain, self.planet['terrain'])
         self.assertEqual(test_planet.climate, self.planet['climate'])
+
+    def test_post_planets_should_return_bad_request_when_data_is_invalid(self):
+        response = self._post_planets({'name': 'test'})
+        self.assertEqual(response.status_code, 400)
+
+    def test_post_planets_should_return_bad_request_details(self):
+        response = self._post_planets({'name': 'test', 'terrain': 'test'})
+        app.logger.info(response.get_data(as_text=True))
+        data = json.loads(response.get_data(as_text=True))
+
+        self.assertEqual(data['code'], 400)
+        self.assertEqual(data['name'], 'Bad Request')
+        self.assertIn("KeyError: 'climate'", data['description'])
 
     def _post_planets(self, data):
         url = '/planets/'

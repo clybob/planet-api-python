@@ -1,3 +1,6 @@
+import json
+
+from werkzeug.exceptions import BadRequest
 from flask import jsonify, request, Response
 
 from api.app import app
@@ -58,3 +61,16 @@ def get_id_from_search(search):
         planet_id = None
 
     return planet_id
+
+
+@app.errorhandler(BadRequest)
+def handle_bad_request(e):
+    response = e.get_response()
+
+    response.data = json.dumps({
+        'code': e.code,
+        'name': e.name,
+        'description': e.description,
+    })
+    response.content_type = 'application/json'
+    return response
