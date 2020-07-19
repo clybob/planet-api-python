@@ -1,5 +1,6 @@
 import unittest
 import requests
+
 from unittest.mock import patch
 
 from api.swapi import Swapi

@@ -1,6 +1,8 @@
 import json
 import unittest
 
+from unittest.mock import patch
+
 from api.app import app
 from api.models import Planet, db
 
@@ -24,15 +26,15 @@ class TestPlanetsView(unittest.TestCase):
         self.assertEqual(response.status_code, 405)
 
     def test_get_planets_should_return_ok(self):
-        response = self.test_app.get('/planets')
+        response = self._get_planets()
         self.assertEqual(response.status_code, 200)
 
     def test_get_planets_should_return_json(self):
-        response = self.test_app.get('/planets')
+        response = self._get_planets()
         self.assertIn(response.content_type, 'application/json')
 
     def test_get_planets_should_return_a_list_of_planets(self):
-        response = self.test_app.get('/planets')
+        response = self._get_planets()
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data, {
             'count': 2,
@@ -40,15 +42,15 @@ class TestPlanetsView(unittest.TestCase):
             'previous': None,
             'results': [
                 {
-                    'name': 'Tatooine',
-                    'climate': 'arid',
-                    'terrain': 'desert',
-                    'films_count': 5
+                    'name': self.planet1.name,
+                    'climate': self.planet1.climate,
+                    'terrain': self.planet1.terrain,
+                    'films_count': 2
                 },
                 {
-                    'name': 'Alderaan',
-                    'climate': 'temperate',
-                    'terrain': 'grasslands, mountains',
+                    'name': self.planet2.name,
+                    'climate': self.planet2.climate,
+                    'terrain': self.planet2.terrain,
                     'films_count': 2
                 }
             ]
@@ -64,3 +66,12 @@ class TestPlanetsView(unittest.TestCase):
 
     def _delete_fixtures(self):
         Planet.query.delete()
+
+    @patch('api.swapi.Swapi.get_planet_films')
+    def _get_planets(self, mock):
+        mock.return_value = self._fake_get_planet_films()
+        response = self.test_app.get('/planets')
+        return response
+
+    def _fake_get_planet_films(self):
+        return 2
