@@ -1,7 +1,7 @@
 import json
 
 from werkzeug.exceptions import BadRequest
-from flask import jsonify, request, Response
+from flask import request, Response
 
 from api.app import app
 from api.models import Planet, db
@@ -31,12 +31,12 @@ def get_planets():
             'films_count': Swapi.get_planet_films(planet.name)
         })
 
-    return jsonify(
-        count=len(results),
-        next=None,
-        previous=None,
-        results=results
-    )
+    return Response(json.dumps({
+        'count': len(results),
+        'next': None,
+        'previous': None,
+        'results': results
+    }), status=200, mimetype='application/json')
 
 
 @app.route('/planets/', methods=['POST'])
