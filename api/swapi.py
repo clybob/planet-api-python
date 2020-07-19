@@ -15,3 +15,5 @@ class Swapi(object):
             if data['count'] == 0:
                 app.logger.info('Swapi: Planet does not exists.')
                 return data['count']
+            else:
+                return len(data['results'][0]['films'])
