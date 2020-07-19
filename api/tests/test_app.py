@@ -56,6 +56,18 @@ class TestPlanetsView(unittest.TestCase):
             ]
         })
 
+    def test_get_planets_should_return_an_empty_list_of_planets(self):
+        self._delete_fixtures()
+        response = self._get_planets()
+        data = json.loads(response.get_data(as_text=True))
+
+        self.assertEqual(data, {
+            'count': 0,
+            'next': None,
+            'previous': None,
+            'results': []
+        })
+
     def _install_fixtures(self):
         self.planet1 = Planet(name='Tatooine', climate='arid', terrain='desert')
         self.planet2 = Planet(name='Alderaan', climate='temperate', terrain='grasslands, mountains')

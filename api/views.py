@@ -19,7 +19,7 @@ def planets():
         })
 
     return jsonify(
-        count=2,
+        count=len(results),
         next=None,
         previous=None,
         results=results
