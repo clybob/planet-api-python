@@ -10,10 +10,17 @@ class Swapi(object):
         response = requests.get(url)
 
         if response.status_code == 200:
-            data = response.json()
+            return cls._get_films_count_from_valid_response(response)
+        else:
+            app.logger.error('Swapi: API Status Code: {code}.'.format(code=response.status_code))
+            return 0
 
-            if data['count'] == 0:
-                app.logger.info('Swapi: Planet does not exists.')
-                return data['count']
-            else:
-                return len(data['results'][0]['films'])
+    @classmethod
+    def _get_films_count_from_valid_response(cls, response):
+        data = response.json()
+
+        if data['count']:
+            return len(data['results'][0]['films'])
+        else:
+            app.logger.info('Swapi: Planet does not exists.')
+            return data['count']
