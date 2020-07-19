@@ -1,7 +1,7 @@
 from flask import jsonify, request, Response
 
 from api.app import app
-from api.models import Planet
+from api.models import Planet, db
 from api.swapi import Swapi
 
 
@@ -38,6 +38,16 @@ def get_planets():
 
 @app.route('/planets/', methods=['POST'])
 def post_planets():
+    new_planet_data = {
+        'name': request.form['name'],
+        'terrain': request.form['terrain'],
+        'climate': request.form['climate']
+    }
+
+    new_planet = Planet(**new_planet_data)
+    db.session.add(new_planet)
+    db.session.commit()
+
     return Response("", status=201, mimetype='application/json')
 
 

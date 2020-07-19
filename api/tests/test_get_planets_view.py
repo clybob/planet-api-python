@@ -102,6 +102,7 @@ class TestGetPlanetsView(unittest.TestCase):
 
     def _delete_fixtures(self):
         Planet.query.delete()
+        db.session.commit()
 
     @patch('api.swapi.Swapi.get_planet_films')
     def _get_planets(self, mock, search=None):
