@@ -18,11 +18,11 @@ class TestPlanetsView(unittest.TestCase):
         self._delete_fixtures()
 
     def test_put_planets_should_return_not_implemented(self):
-        response = self.test_app.put('/planets')
+        response = self.test_app.put('/planets/')
         self.assertEqual(response.status_code, 405)
 
     def test_delete_planets_should_return_not_implemented(self):
-        response = self.test_app.delete('/planets')
+        response = self.test_app.delete('/planets/')
         self.assertEqual(response.status_code, 405)
 
     def test_get_planets_should_return_ok(self):
@@ -68,6 +68,22 @@ class TestPlanetsView(unittest.TestCase):
             'results': []
         })
 
+    def test_get_planets_should_return_filtered_planets_by_name(self):
+        response = self._get_planets(search='Tatooine')
+        data = json.loads(response.get_data(as_text=True))
+
+        self.assertEqual(data, {
+            'count': 1,
+            'next': None,
+            'previous': None,
+            'results': [{
+                'name': self.planet1.name,
+                'climate': self.planet1.climate,
+                'terrain': self.planet1.terrain,
+                'films_count': 2
+            }]
+        })
+
     def _install_fixtures(self):
         self.planet1 = Planet(name='Tatooine', climate='arid', terrain='desert')
         self.planet2 = Planet(name='Alderaan', climate='temperate', terrain='grasslands, mountains')
@@ -80,9 +96,15 @@ class TestPlanetsView(unittest.TestCase):
         Planet.query.delete()
 
     @patch('api.swapi.Swapi.get_planet_films')
-    def _get_planets(self, mock):
+    def _get_planets(self, mock, search=None,):
         mock.return_value = self._fake_get_planet_films()
-        response = self.test_app.get('/planets')
+        url = '/planets/'
+
+        if search:
+            url += '?search={search}'.format(search=search)
+
+        response = self.test_app.get(url)
+
         return response
 
     def _fake_get_planet_films(self):

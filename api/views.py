@@ -1,14 +1,20 @@
-from flask import jsonify
+from flask import jsonify, request
+
 
 from api.app import app
 from api.models import Planet
 from api.swapi import Swapi
 
 
-@app.route('/planets', methods=['GET', 'POST'])
+@app.route('/planets/', methods=['GET', 'POST'])
 def planets():
-    planets = Planet.query.all()
+    search = request.args.get('search')
     results = []
+
+    if search:
+        planets = Planet.query.filter_by(name=search)
+    else:
+        planets = Planet.query.all()
 
     for planet in planets:
         results.append({
