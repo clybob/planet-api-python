@@ -1,5 +1,9 @@
 setup:
-	@python -m pip install -r requirements_test.txt
+	@docker-compose build
+
+run:
+	@docker-compose up web
 
 test:
-	@py.test
+	@docker-compose run test
+
