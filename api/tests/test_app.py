@@ -7,7 +7,20 @@ from api.app import app
 from api.models import Planet, db
 
 
-class TestPlanetsView(unittest.TestCase):
+class TestBasePlanetsView(unittest.TestCase):
+    url = '/planets/'
+    test_app = app.test_client()
+
+    def test_put_planets_should_return_not_implemented(self):
+        response = self.test_app.put(self.url)
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete_planets_should_return_not_implemented(self):
+        response = self.test_app.delete(self.url)
+        self.assertEqual(response.status_code, 405)
+
+
+class TestGetPlanetsView(unittest.TestCase):
     maxDiff = 1000
 
     def setUp(self):
@@ -16,14 +29,6 @@ class TestPlanetsView(unittest.TestCase):
 
     def tearDown(self):
         self._delete_fixtures()
-
-    def test_put_planets_should_return_not_implemented(self):
-        response = self.test_app.put('/planets/')
-        self.assertEqual(response.status_code, 405)
-
-    def test_delete_planets_should_return_not_implemented(self):
-        response = self.test_app.delete('/planets/')
-        self.assertEqual(response.status_code, 405)
 
     def test_get_planets_should_return_ok(self):
         response = self._get_planets()
