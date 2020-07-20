@@ -14,6 +14,7 @@ def get_planets():
 
     cache_key = 'get_planets_{search}'.format(search=search)
     if cache.get(cache_key):
+        app.logger.info('CACHE HIT: GET /planets/.')
         response = cache.get(cache_key)
         return Response(response, status=200, mimetype='application/json')
 
@@ -38,6 +39,7 @@ def get_planets():
     })
 
     cache.set(cache_key, response, timeout=30)
+    app.logger.info('CACHE MISS: GET /planets/.')
     return Response(response, status=200, mimetype='application/json')
 
 
@@ -113,8 +115,10 @@ def get_id_from_search(search):
 
 
 @app.errorhandler(HTTPException)
-def handle_bad_request(e):
+def handle_http_exception(e):
     response = e.get_response()
+    app.logger.info('HTTP Exception: code {code} - {description}.'.format(
+        code=e.code, description=e.description))
 
     response.data = json.dumps({
         'code': e.code,

@@ -1,3 +1,4 @@
+- Adicionar log no erro
 - Hospedar APi
 - Autenticação
 - Ver problema com unique
