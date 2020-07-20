@@ -1,0 +1,7 @@
+- Tratar erro 404 no get de planeta
+- Criar método de Put de planeta
+- Criar método de Delete de planeta
+- Apresentar id do planeta (sem ele fica impossivel acessar o restante da api)
+- Hospedar APi
+- Cache de acesso ao swapi
+- Autenticação

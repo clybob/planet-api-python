@@ -1,6 +1,6 @@
 import json
 
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import HTTPException
 from flask import request, Response
 
 from api.app import app
@@ -54,6 +54,18 @@ def post_planets():
     return Response("", status=201, mimetype='application/json')
 
 
+@app.route('/planets/<int:planet_id>/', methods=['GET'])
+def get_planet(planet_id):
+    planet = Planet.query.get_or_404(planet_id)
+    return Response(json.dumps({
+        'id': planet.id,
+        'name': planet.name,
+        'terrain': planet.terrain,
+        'climate': planet.climate,
+        'films_count': Swapi.get_planet_films(planet.name)
+    }), status=200, mimetype='application/json')
+
+
 def get_id_from_search(search):
     try:
         planet_id = int(search)
@@ -63,7 +75,7 @@ def get_id_from_search(search):
     return planet_id
 
 
-@app.errorhandler(BadRequest)
+@app.errorhandler(HTTPException)
 def handle_bad_request(e):
     response = e.get_response()
 
