@@ -8,7 +8,6 @@ from api.models import Planet, db
 
 
 class TestGetPlanetView(unittest.TestCase):
-    maxDiff = 1000
 
     def setUp(self):
         self.test_app = app.test_client()
@@ -47,10 +46,8 @@ class TestGetPlanetView(unittest.TestCase):
 
     def _install_fixtures(self):
         self.planet1 = Planet(name='Tatooine', climate='arid', terrain='desert')
-        self.planet2 = Planet(name='Alderaan', climate='temperate', terrain='grasslands, mountains')
 
         db.session.add(self.planet1)
-        db.session.add(self.planet2)
         db.session.commit()
 
     def _delete_fixtures(self):
