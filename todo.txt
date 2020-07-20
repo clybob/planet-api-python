@@ -1,4 +1,4 @@
-- Adicionar log no erro
 - Hospedar APi
+- Paginação
 - Autenticação
 - Ver problema com unique

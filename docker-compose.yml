@@ -8,9 +8,9 @@ services:
       - POSTGRES_PASSWORD=root
   web:
     build: .
-    command: >
+    command: bash -c "
       flask create-db &&
-      flask run --host 0.0.0.0
+      flask run --host 0.0.0.0"
     environment:
       - DATABASE_URL=postgresql+psycopg2://root:root@db/starwarsapi
       - FLASK_APP=api/app.py
