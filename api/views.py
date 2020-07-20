@@ -10,7 +10,6 @@ from api.models import Planet, PlanetSerializer, db
 @app.route('/planets/', methods=['GET'])
 def get_planets():
     search = request.args.get('search')
-    results = []
 
     cache_key = 'get_planets_{search}'.format(search=search)
     if cache.get(cache_key):
@@ -28,8 +27,7 @@ def get_planets():
     else:
         planets = Planet.query.all()
 
-    for planet in planets:
-        results.append(PlanetSerializer(planet).data)
+    results = [PlanetSerializer(planet).data for planet in planets]
 
     response = json.dumps({
         'count': len(results),
