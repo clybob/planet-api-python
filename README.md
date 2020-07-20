@@ -18,9 +18,18 @@ make run
 make test
 ```
 
+## Tecnologias
+* Python
+* Flask
+* SQL Alchemy
+* Requests
+* Flask Caching
+* Postgres
+
+
 ## Decisões de projeto
 
-### Frameworks
+### Framework
 Para esse projeto descartei o Django por se tratar de um framework muito grande para um projeto tão simples, apesar dele ter o Django-rest-framework que torna a criação de APIs bem simples.
 
 Cogitei principalmente Flask e Tornado.
