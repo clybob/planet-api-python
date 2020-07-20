@@ -34,12 +34,14 @@ class TestGetPlanetsView(unittest.TestCase):
             'previous': None,
             'results': [
                 {
+                    'id': self.planet1.id,
                     'name': self.planet1.name,
                     'climate': self.planet1.climate,
                     'terrain': self.planet1.terrain,
                     'films_count': 2
                 },
                 {
+                    'id': self.planet2.id,
                     'name': self.planet2.name,
                     'climate': self.planet2.climate,
                     'terrain': self.planet2.terrain,
@@ -69,6 +71,7 @@ class TestGetPlanetsView(unittest.TestCase):
             'next': None,
             'previous': None,
             'results': [{
+                'id': self.planet1.id,
                 'name': self.planet1.name,
                 'climate': self.planet1.climate,
                 'terrain': self.planet1.terrain,
@@ -85,6 +88,7 @@ class TestGetPlanetsView(unittest.TestCase):
             'next': None,
             'previous': None,
             'results': [{
+                'id': self.planet2.id,
                 'name': self.planet2.name,
                 'climate': self.planet2.climate,
                 'terrain': self.planet2.terrain,

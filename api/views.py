@@ -1,6 +1,7 @@
 import json
 
 from werkzeug.exceptions import HTTPException
+from sqlalchemy.exc import IntegrityError
 from flask import request, Response
 
 from api.app import app
@@ -25,6 +26,7 @@ def get_planets():
 
     for planet in planets:
         results.append({
+            'id': planet.id,
             'name': planet.name,
             'climate': planet.climate,
             'terrain': planet.terrain,
@@ -64,6 +66,40 @@ def get_planet(planet_id):
         'climate': planet.climate,
         'films_count': Swapi.get_planet_films(planet.name)
     }), status=200, mimetype='application/json')
+
+
+@app.route('/planets/<int:planet_id>/', methods=['PUT', 'PATCH'])
+def update_planet(planet_id):
+    planet = Planet.query.get_or_404(planet_id)
+
+    if request.form.get('name'):
+        planet.name = request.form['name']
+
+    if request.form.get('terrain'):
+        planet.terrain = request.form['terrain']
+
+    if request.form.get('climate'):
+        planet.climate = request.form['climate']
+
+    db.session.add(planet)
+    db.session.commit()
+
+    return Response(json.dumps({
+        'id': planet.id,
+        'name': planet.name,
+        'terrain': planet.terrain,
+        'climate': planet.climate,
+        'films_count': Swapi.get_planet_films(planet.name)
+    }), status=200, mimetype='application/json')
+
+
+@app.route('/planets/<int:planet_id>/', methods=['DELETE'])
+def delete_planet(planet_id):
+    planet = Planet.query.get_or_404(planet_id)
+    db.session.delete(planet)
+    db.session.commit()
+
+    return Response(json.dumps({}), status=204, mimetype='application/json')
 
 
 def get_id_from_search(search):
