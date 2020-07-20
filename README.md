@@ -25,6 +25,7 @@ make test
 * Requests
 * Flask Caching
 * Postgres
+* Docker
 
 
 ## Decisões de projeto
