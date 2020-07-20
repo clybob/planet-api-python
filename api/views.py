@@ -1,12 +1,10 @@
 import json
 
 from werkzeug.exceptions import HTTPException
-from sqlalchemy.exc import IntegrityError
 from flask import request, Response
 
 from api.app import app
-from api.models import Planet, db
-from api.swapi import Swapi
+from api.models import Planet, PlanetSerializer, db
 
 
 @app.route('/planets/', methods=['GET'])
@@ -25,13 +23,7 @@ def get_planets():
         planets = Planet.query.all()
 
     for planet in planets:
-        results.append({
-            'id': planet.id,
-            'name': planet.name,
-            'climate': planet.climate,
-            'terrain': planet.terrain,
-            'films_count': Swapi.get_planet_films(planet.name)
-        })
+        results.append(PlanetSerializer(planet).data)
 
     return Response(json.dumps({
         'count': len(results),
@@ -53,19 +45,21 @@ def post_planets():
     db.session.add(new_planet)
     db.session.commit()
 
-    return Response("", status=201, mimetype='application/json')
+    return Response(
+        PlanetSerializer(new_planet).to_json(),
+        status=201,
+        mimetype='application/json'
+    )
 
 
 @app.route('/planets/<int:planet_id>/', methods=['GET'])
 def get_planet(planet_id):
     planet = Planet.query.get_or_404(planet_id)
-    return Response(json.dumps({
-        'id': planet.id,
-        'name': planet.name,
-        'terrain': planet.terrain,
-        'climate': planet.climate,
-        'films_count': Swapi.get_planet_films(planet.name)
-    }), status=200, mimetype='application/json')
+    return Response(
+        PlanetSerializer(planet).to_json(),
+        status=200,
+        mimetype='application/json'
+    )
 
 
 @app.route('/planets/<int:planet_id>/', methods=['PUT', 'PATCH'])
@@ -84,13 +78,11 @@ def update_planet(planet_id):
     db.session.add(planet)
     db.session.commit()
 
-    return Response(json.dumps({
-        'id': planet.id,
-        'name': planet.name,
-        'terrain': planet.terrain,
-        'climate': planet.climate,
-        'films_count': Swapi.get_planet_films(planet.name)
-    }), status=200, mimetype='application/json')
+    return Response(
+        PlanetSerializer(planet).to_json(),
+        status=200,
+        mimetype='application/json'
+    )
 
 
 @app.route('/planets/<int:planet_id>/', methods=['DELETE'])

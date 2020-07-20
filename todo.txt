@@ -1,4 +1,3 @@
-- Criar serializer de planeta
 - Hospedar APi
 - Cache de acesso ao swapi
 - Autenticação
