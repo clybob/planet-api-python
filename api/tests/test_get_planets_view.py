@@ -3,7 +3,7 @@ import unittest
 
 from unittest.mock import patch
 
-from api.app import app
+from api.app import app, cache
 from api.models import Planet, db
 
 
@@ -50,8 +50,17 @@ class TestGetPlanetsView(unittest.TestCase):
             ]
         })
 
+    def test_get_planets_should_return_cached(self):
+        self._get_planets()
+
+        with patch('json.dumps') as mock:
+            mock.return_value = {}
+            self._get_planets()
+            self.assertFalse(mock.called)
+
     def test_get_planets_should_return_an_empty_list_of_planets(self):
         self._delete_fixtures()
+        cache.delete('get_planets_None')
         response = self._get_planets()
         data = json.loads(response.get_data(as_text=True))
 

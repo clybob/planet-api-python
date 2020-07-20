@@ -1,10 +1,13 @@
 import requests
 
-from api.app import app
+from api.app import app, cache
+
+ONE_WEEK = 604800
 
 
 class Swapi(object):
     @classmethod
+    @cache.memoize(ONE_WEEK)
     def get_planet_films(cls, name):
         url = 'https://swapi.dev/api/planets/?search={name}'.format(name=name)
         response = requests.get(url)
@@ -24,3 +27,6 @@ class Swapi(object):
         else:
             app.logger.info('Swapi: Planet does not exists.')
             return data['count']
+
+    def __repr__(self):
+        return 'Swapi'

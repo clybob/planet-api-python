@@ -18,3 +18,8 @@ Para uma API simples como essa normalmente eu usaria um banco relacional MySQL, 
 
 ### Testes
 Para evitar que os testes façam requests na Swapi e fiquem lentos existe um mock do método responsável por buscar as informações de filmes da API. E nos testes desse método o acesso a API é feito para garantir a integração.
+
+### Cache
+Para evitar requests desnecessários na Swapi adicionei um memoize com timeout de 1 semana, assim cada planeta será pesquisado apenas 1 vez por semana, como não são lançados novos filmes novos com tanta frequência esse tempo de cache já é o suficiente. E quando lançar um novo filme pode-se limpar o cache pra ser mais rápido.
+
+Nas rotas da API adicionei um cache de 30 segundos, isso pode ser o suficiente para não derrubar a API em caso de falhas do NGINX e ao mesmo tempo mantem o dinamismo necessário para um jogo.

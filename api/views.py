@@ -3,7 +3,7 @@ import json
 from werkzeug.exceptions import HTTPException
 from flask import request, Response
 
-from api.app import app
+from api.app import app, cache
 from api.models import Planet, PlanetSerializer, db
 
 
@@ -11,6 +11,11 @@ from api.models import Planet, PlanetSerializer, db
 def get_planets():
     search = request.args.get('search')
     results = []
+
+    cache_key = 'get_planets_{search}'.format(search=search)
+    if cache.get(cache_key):
+        response = cache.get(cache_key)
+        return Response(response, status=200, mimetype='application/json')
 
     if search:
         planet_id = get_id_from_search(search)
@@ -25,12 +30,15 @@ def get_planets():
     for planet in planets:
         results.append(PlanetSerializer(planet).data)
 
-    return Response(json.dumps({
+    response = json.dumps({
         'count': len(results),
         'next': None,
         'previous': None,
         'results': results
-    }), status=200, mimetype='application/json')
+    })
+
+    cache.set(cache_key, response, timeout=30)
+    return Response(response, status=200, mimetype='application/json')
 
 
 @app.route('/planets/', methods=['POST'])
@@ -53,6 +61,7 @@ def post_planets():
 
 
 @app.route('/planets/<int:planet_id>/', methods=['GET'])
+@cache.cached(timeout=30)
 def get_planet(planet_id):
     planet = Planet.query.get_or_404(planet_id)
     return Response(
