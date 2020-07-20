@@ -1,6 +1,23 @@
 # planet-api-python
 API de planetas de Star Wars
 
+## Como rodar
+
+### Setup
+```
+make setup
+```
+
+### Run
+```
+make run
+```
+
+### Testes
+```
+make test
+```
+
 ## Decisões de projeto
 
 ### Frameworks
