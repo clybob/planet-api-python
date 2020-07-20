@@ -80,6 +80,7 @@ class TestUpdatePlanetView(unittest.TestCase):
 
 
 class TestPatchPlanetView(TestUpdatePlanetView):
+    # This class execute the same tests of put in patch version
 
     def _update(self, url, data):
         return self.test_app.patch(url, data=data)
