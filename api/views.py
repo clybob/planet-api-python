@@ -12,7 +12,7 @@ def get_planets():
     search = request.args.get('search')
     page = request.args.get('page', 1, type=int)
 
-    cache_key = 'get_planets_{search}'.format(search=search)
+    cache_key = 'get_planets_{search}_{page}'.format(search=search, page=page)
     if cache.get(cache_key):
         app.logger.info('CACHE HIT: GET /planets/.')
         response = cache.get(cache_key)

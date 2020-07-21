@@ -28,27 +28,24 @@ class TestGetPlanetsView(unittest.TestCase):
     def test_get_planets_should_return_a_list_of_planets(self):
         response = self._get_planets()
         data = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data, {
-            'count': 2,
-            'next': None,
-            'previous': None,
-            'results': [
-                {
-                    'id': self.planet1.id,
-                    'name': self.planet1.name,
-                    'climate': self.planet1.climate,
-                    'terrain': self.planet1.terrain,
-                    'films_count': 2
-                },
-                {
-                    'id': self.planet2.id,
-                    'name': self.planet2.name,
-                    'climate': self.planet2.climate,
-                    'terrain': self.planet2.terrain,
-                    'films_count': 2
-                }
-            ]
-        })
+
+        self.assertPaginate(data, count=2, results=2)
+        self.assertEqual(data['results'], [
+            {
+                'id': self.planet1.id,
+                'name': self.planet1.name,
+                'climate': self.planet1.climate,
+                'terrain': self.planet1.terrain,
+                'films_count': 2
+            },
+            {
+                'id': self.planet2.id,
+                'name': self.planet2.name,
+                'climate': self.planet2.climate,
+                'terrain': self.planet2.terrain,
+                'films_count': 2
+            }
+        ])
 
     def test_get_planets_should_return_cached(self):
         self._get_planets()
@@ -60,53 +57,41 @@ class TestGetPlanetsView(unittest.TestCase):
 
     def test_get_planets_should_return_an_empty_list_of_planets(self):
         self._delete_fixtures()
-        cache.delete('get_planets_None')
+        cache.delete('get_planets_None_1')
         response = self._get_planets()
         data = json.loads(response.get_data(as_text=True))
 
-        self.assertEqual(data, {
-            'count': 0,
-            'next': None,
-            'previous': None,
-            'results': []
-        })
+        self.assertPaginate(data, count=0, results=0)
+        self.assertEqual(data['results'], [])
 
     def test_get_planets_should_return_filtered_planets_by_name(self):
         response = self._get_planets(search='Tatooine')
         data = json.loads(response.get_data(as_text=True))
 
-        self.assertEqual(data, {
-            'count': 1,
-            'next': None,
-            'previous': None,
-            'results': [{
-                'id': self.planet1.id,
-                'name': self.planet1.name,
-                'climate': self.planet1.climate,
-                'terrain': self.planet1.terrain,
-                'films_count': 2
-            }]
-        })
+        self.assertPaginate(data, count=1, results=1)
+        self.assertEqual(data['results'], [{
+            'id': self.planet1.id,
+            'name': self.planet1.name,
+            'climate': self.planet1.climate,
+            'terrain': self.planet1.terrain,
+            'films_count': 2
+        }])
 
     def test_get_planets_should_return_filtered_planets_by_id(self):
         response = self._get_planets(search=self.planet2.id)
         data = json.loads(response.get_data(as_text=True))
 
-        self.assertEqual(data, {
-            'count': 1,
-            'next': None,
-            'previous': None,
-            'results': [{
-                'id': self.planet2.id,
-                'name': self.planet2.name,
-                'climate': self.planet2.climate,
-                'terrain': self.planet2.terrain,
-                'films_count': 2
-            }]
-        })
+        self.assertPaginate(data, count=1, results=1)
+        self.assertEqual(data['results'], [{
+            'id': self.planet2.id,
+            'name': self.planet2.name,
+            'climate': self.planet2.climate,
+            'terrain': self.planet2.terrain,
+            'films_count': 2
+        }])
 
     def test_get_planets_should_return_a_list_with_pagination(self):
-        cache.delete('get_planets_None')
+        cache.delete('get_planets_None_1')
         self._create_planets()
 
         response = self._get_planets()
@@ -116,7 +101,7 @@ class TestGetPlanetsView(unittest.TestCase):
         self.assertPaginate(data, count=22, results=20, next_url=expected_next_url)
 
     def test_get_planets_should_return_planets_of_page_2(self):
-        cache.delete('get_planets_None')
+        cache.delete('get_planets_None_1')
         self._create_planets()
 
         response = self._get_planets(page=2)
