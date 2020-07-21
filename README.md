@@ -154,3 +154,13 @@ Para evitar requests desnecessários na Swapi adicionei um memoize com timeout d
 Nas rotas da API adicionei um cache de 30 segundos, isso pode ser o suficiente para não derrubar a API em caso de falhas do NGINX e ao mesmo tempo mantem o dinamismo necessário para um jogo.
 
 O uso da estratégia de cache "simple" (em memória local) foi apenas para tornar a implementação mais facil. Em um sistema de produção usaria o Redis como backend para poder compartilhar o cache entre diversas instâncias.
+
+### Features não implementadas
+**Autenticação**
+Para não ir muito além do enunciado do projeto decidi não implementar a autenticação, mas sei que se essa API fosse ao ar esse "detalhe" não poderia faltar.
+
+**Rate Limit**
+Seguindo a linha do item anterior seria interessante implementar um rate limit baseado no token de cada consumidor da API, esse controle poderia ser facilmente implementado usando o INCR do Redis.
+
+**Prod**
+Para a apresentação do desafio usei apenas uma instância EC2 rodando o próprio Flask. Se essa API realmente fosse usada em produçãp configuraria para funcionar com o Gunicorn e Nginx.

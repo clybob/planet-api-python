@@ -1,4 +1,0 @@
-- NGINX na frente da API
-- Autenticação
-- Ver problema com unique
-- Documentar cache simple
