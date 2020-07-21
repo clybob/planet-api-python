@@ -28,7 +28,11 @@ make test
 * Docker Compose
 
 ## API
-* **GET:** http://ec2-18-231-117-182.sa-east-1.compute.amazonaws.com:5000/planets/
+* **GET:** http://ec2-18-231-117-182.sa-east-1.compute.amazonaws.com:5000/planets/?search=Tatooine&page=1
+
+Parâmetros de Get
+* **search**: Busca por nome ou id do planeta
+* **page**: Filtra por uma página específica
 
 Retorno 200
 ```javascript
