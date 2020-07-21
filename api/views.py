@@ -18,28 +18,14 @@ def get_planets():
         response = cache.get(cache_key)
         return Response(response, status=200, mimetype='application/json')
 
-    if search:
-        planet_id = get_id_from_search(search)
-
-        if planet_id:
-            planets = Planet.query.filter_by(id=planet_id)
-        else:
-            planets = Planet.query.filter_by(name=search)
-    else:
-        planets = Planet.query
-
-    count = planets.count()
-
-    planets = planets.paginate(page, app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('get_planets', page=planets.next_num, _external=True) if planets.has_next else None
-    prev_url = url_for('get_planets', page=planets.prev_num, _external=True) if planets.has_prev else None
-
-    results = [PlanetSerializer(planet).data for planet in planets.items]
+    planets = get_filtered_planets(search)
+    planets_page = planets.paginate(page, app.config['POSTS_PER_PAGE'], False)
+    results = [PlanetSerializer(planet).data for planet in planets_page.items]
 
     response = json.dumps({
-        'count': count,
-        'next': next_url,
-        'previous': prev_url,
+        'count': planets.count(),
+        'next': get_paginate_url(planets_page, 'next'),
+        'previous': get_paginate_url(planets_page, 'prev'),
         'results': results
     })
 
@@ -125,6 +111,20 @@ def handle_http_exception(e):
     return response
 
 
+def get_filtered_planets(search):
+    if search:
+        planet_id = get_id_from_search(search)
+
+        if planet_id:
+            planets = Planet.query.filter_by(id=planet_id)
+        else:
+            planets = Planet.query.filter_by(name=search)
+    else:
+        planets = Planet.query
+
+    return planets
+
+
 def get_id_from_search(search):
     try:
         planet_id = int(search)
@@ -132,3 +132,12 @@ def get_id_from_search(search):
         planet_id = None
 
     return planet_id
+
+
+def get_paginate_url(planets, direction):
+    if getattr(planets, 'has_{direction}'.format(direction=direction), None):
+        return url_for(
+            'get_planets',
+            page=getattr(planets, '{direction}_num'.format(direction=direction)),
+            _external=True
+        )
