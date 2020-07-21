@@ -1,4 +1,3 @@
-- Post, Put devem ser em json
 - NGINX na frente da API
 - Autenticação
 - Ver problema com unique

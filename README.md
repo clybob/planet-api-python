@@ -25,7 +25,109 @@ make test
 * Requests
 * Flask Caching
 * Postgres
-* Docker
+* Docker Compose
+
+## API
+* **GET:** http://ec2-18-231-117-182.sa-east-1.compute.amazonaws.com:5000/planets/
+
+Retorno 200
+```javascript
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "name": "Tatooine",
+      "climate": "arid",
+      "terrain": "desert",
+      "films_count": 5
+    }
+  ]
+}
+```
+
+* **POST:** http://ec2-18-231-117-182.sa-east-1.compute.amazonaws.com:5000/planets/
+
+Body
+```javascript
+{
+  "name": "Tatooine",
+  "climate": "arid",
+  "terrain": "desert",
+}
+```
+
+Retorno 201
+```javascript
+{
+  "id": 1,
+  "name": "Tatooine",
+  "climate": "arid",
+  "terrain": "desert",
+  "films_count": 5
+}
+```
+
+* **GET:** http://ec2-18-231-117-182.sa-east-1.compute.amazonaws.com:5000/planets/1/
+
+Retorno 200
+```javascript
+{
+  "id": 1,
+  "name": "Tatooine",
+  "climate": "arid",
+  "terrain": "desert",
+  "films_count": 5
+}
+```
+
+* **PUT:** http://ec2-18-231-117-182.sa-east-1.compute.amazonaws.com:5000/planets/1/
+
+Body
+```javascript
+{
+  "name": "Tatooine New",
+  "climate": "arid",
+  "terrain": "desert",
+}
+```
+
+Retorno 200
+```javascript
+{
+  "id": 1,
+  "name": "Tatooine New",
+  "climate": "arid",
+  "terrain": "desert",
+  "films_count": 5
+}
+```
+
+* **PATCH:** http://ec2-18-231-117-182.sa-east-1.compute.amazonaws.com:5000/planets/1/
+
+Body
+```javascript
+{
+  "name": "Tatooine New"
+}
+```
+
+Retorno 200
+```javascript
+{
+  "id": 1,
+  "name": "Tatooine New",
+  "climate": "arid",
+  "terrain": "desert",
+  "films_count": 5
+}
+```
+
+* **DELETE:** http://ec2-18-231-117-182.sa-east-1.compute.amazonaws.com:5000/planets/1/
+
+Retorno 204
 
 
 ## Decisões de projeto
@@ -50,3 +152,5 @@ Para evitar que os testes façam requests na Swapi e fiquem lentos existe um moc
 Para evitar requests desnecessários na Swapi adicionei um memoize com timeout de 1 semana, assim cada planeta será pesquisado apenas 1 vez por semana, como não são lançados novos filmes novos com tanta frequência esse tempo de cache já é o suficiente. E quando lançar um novo filme pode-se limpar o cache pra ser mais rápido.
 
 Nas rotas da API adicionei um cache de 30 segundos, isso pode ser o suficiente para não derrubar a API em caso de falhas do NGINX e ao mesmo tempo mantem o dinamismo necessário para um jogo.
+
+O uso da estratégia de cache "simple" (em memória local) foi apenas para tornar a implementação mais facil. Em um sistema de produção usaria o Redis como backend para poder compartilhar o cache entre diversas instâncias.
