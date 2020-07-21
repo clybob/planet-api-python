@@ -40,15 +40,12 @@ class TestPostPlanetsView(unittest.TestCase):
 
     def test_post_planets_should_return_planet(self):
         response = self._post_planets(self.planet)
-        app.logger.info('dada' + response.get_data(as_text=True))
         data = json.loads(response.get_data(as_text=True))
 
-        self.assertDictContainsSubset({
-            'name': self.planet['name'],
-            'climate': self.planet['climate'],
-            'terrain': self.planet['terrain'],
-            'films_count': 2
-        }, data)
+        self.assertEqual(data['name'], self.planet['name'])
+        self.assertEqual(data['climate'], self.planet['climate'])
+        self.assertEqual(data['terrain'], self.planet['terrain'])
+        self.assertEqual(data['films_count'], 2)
 
     def test_post_planets_should_return_bad_request_when_data_is_invalid(self):
         response = self._post_planets({'name': 'test'})

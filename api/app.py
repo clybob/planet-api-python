@@ -1,4 +1,5 @@
 import os
+import logging
 
 from flask import Flask
 from flask_caching import Cache
@@ -14,6 +15,9 @@ app.config['SERVER_NAME'] = os.environ['SERVER_NAME']
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['POSTS_PER_PAGE'] = 20
+
+if os.environ['TEST']:
+    app.logger.setLevel(logging.ERROR)
 
 app.config.from_mapping(config)
 cache = Cache(app)
