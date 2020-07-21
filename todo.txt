@@ -1,6 +1,5 @@
 - Post, Put devem ser em json
 - NGINX na frente da API
-- Paginação
 - Autenticação
 - Ver problema com unique
 - Documentar cache simple

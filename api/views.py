@@ -1,6 +1,6 @@
 import json
 
-from werkzeug.exceptions import HTTPException
+from werkzeug.exceptions import HTTPException, BadRequest
 from flask import request, Response, url_for
 
 from api.app import app, cache
@@ -36,11 +36,14 @@ def get_planets():
 
 @app.route('/planets/', methods=['POST'])
 def post_planets():
-    new_planet_data = {
-        'name': request.form['name'],
-        'terrain': request.form['terrain'],
-        'climate': request.form['climate']
-    }
+    fields = ['name', 'terrain', 'climate']
+    new_planet_data = {}
+
+    for field in fields:
+        if field not in request.json:
+            raise BadRequest("KeyError: '{key}'".format(key=field))
+
+        new_planet_data[field] = request.json[field]
 
     new_planet = Planet(**new_planet_data)
     db.session.add(new_planet)
@@ -66,16 +69,12 @@ def get_planet(planet_id):
 
 @app.route('/planets/<int:planet_id>/', methods=['PUT', 'PATCH'])
 def update_planet(planet_id):
+    fields = ['name', 'terrain', 'climate']
     planet = Planet.query.get_or_404(planet_id)
 
-    if request.form.get('name'):
-        planet.name = request.form['name']
-
-    if request.form.get('terrain'):
-        planet.terrain = request.form['terrain']
-
-    if request.form.get('climate'):
-        planet.climate = request.form['climate']
+    for field in fields:
+        if request.json.get(field):
+            setattr(planet, field, request.json[field])
 
     db.session.add(planet)
     db.session.commit()

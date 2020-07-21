@@ -63,10 +63,10 @@ class TestPostPlanetsView(unittest.TestCase):
         self.assertIn("KeyError: 'climate'", data['description'])
 
     @patch('api.swapi.Swapi.get_planet_films')
-    def _post_planets(self, data, mock):
+    def _post_planets(self, json, mock):
         mock.return_value = self._fake_update_planet_films()
         url = '/planets/'
-        response = self.test_app.post(url, data=data)
+        response = self.test_app.post(url, json=json)
 
         return response
 

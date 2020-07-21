@@ -65,22 +65,22 @@ class TestUpdatePlanetView(unittest.TestCase):
         db.session.commit()
 
     @patch('api.swapi.Swapi.get_planet_films')
-    def _update_planet(self, planet_id, data, mock):
+    def _update_planet(self, planet_id, json, mock):
         mock.return_value = self._fake_update_planet_films()
         url = '/planets/{planet_id}/'.format(planet_id=planet_id)
 
-        response = self._update(url, data=data)
+        response = self._update(url, json=json)
         return response
 
     def _fake_update_planet_films(self):
         return 2
 
-    def _update(self, url, data):
-        return self.test_app.put(url, data=data)
+    def _update(self, url, json):
+        return self.test_app.put(url, json=json)
 
 
 class TestPatchPlanetView(TestUpdatePlanetView):
     # This class execute the same tests of put in patch version
 
-    def _update(self, url, data):
-        return self.test_app.patch(url, data=data)
+    def _update(self, url, json):
+        return self.test_app.patch(url, json=json)
