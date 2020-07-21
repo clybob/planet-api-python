@@ -9,10 +9,8 @@ services:
   web:
     build: .
     environment:
-      - SERVER_NAME=localhost:5000
       - DATABASE_URL=postgresql+psycopg2://root:root@db/starwarsapi
       - FLASK_APP=api/app.py
-      - FLASK_ENV=development
     ports:
       - "5000:5000"
     volumes:
