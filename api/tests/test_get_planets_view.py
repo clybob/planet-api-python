@@ -105,6 +105,26 @@ class TestGetPlanetsView(unittest.TestCase):
             }]
         })
 
+    def test_get_planets_should_return_a_list_with_pagination(self):
+        cache.delete('get_planets_None')
+        self._create_planets()
+
+        response = self._get_planets()
+        data = json.loads(response.get_data(as_text=True))
+
+        expected_next_url = 'http://localhost:5000/planets/?page=2'
+        self.assertPaginate(data, count=22, results=20, next_url=expected_next_url)
+
+    def test_get_planets_should_return_planets_of_page_2(self):
+        cache.delete('get_planets_None')
+        self._create_planets()
+
+        response = self._get_planets(page=2)
+        data = json.loads(response.get_data(as_text=True))
+
+        expected_previous_url = 'http://localhost:5000/planets/?page=1'
+        self.assertPaginate(data, count=22, results=2, previous_url=expected_previous_url)
+
     def _install_fixtures(self):
         self.planet1 = Planet(name='Tatooine', climate='arid', terrain='desert')
         self.planet2 = Planet(name='Alderaan', climate='temperate', terrain='grasslands, mountains')
@@ -118,12 +138,15 @@ class TestGetPlanetsView(unittest.TestCase):
         db.session.commit()
 
     @patch('api.swapi.Swapi.get_planet_films')
-    def _get_planets(self, mock, search=None):
+    def _get_planets(self, mock, search=None, page=None):
         mock.return_value = self._fake_get_planet_films()
         url = '/planets/'
 
         if search:
             url += '?search={search}'.format(search=search)
+
+        if page:
+            url += '?page={page}'.format(page=page)
 
         response = self.test_app.get(url)
 
@@ -131,3 +154,17 @@ class TestGetPlanetsView(unittest.TestCase):
 
     def _fake_get_planet_films(self):
         return 2
+
+    def _create_planets(self, total=20):
+        for x in range(0, total):
+            test_data = 'Terra {x}'.format(x=x)
+            new_planet = Planet(name=test_data, climate=test_data, terrain=test_data)
+            db.session.add(new_planet)
+
+        db.session.commit()
+
+    def assertPaginate(self, data, count=0, results=0, next_url=None, previous_url=None):
+        self.assertEqual(data['count'], count)
+        self.assertEqual(len(data['results']), results)
+        self.assertEqual(data['previous'], previous_url)
+        self.assertEqual(data['next'], next_url)

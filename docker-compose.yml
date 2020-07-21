@@ -12,11 +12,12 @@ services:
       flask create-db &&
       flask run --host 0.0.0.0"
     environment:
+      - SERVER_NAME=localhost:5000
       - DATABASE_URL=postgresql+psycopg2://root:root@db/starwarsapi
       - FLASK_APP=api/app.py
       - FLASK_ENV=development
     ports:
-      - "8000:5000"
+      - "5000:5000"
     volumes:
       - .:/var/www/starwarsapi
     depends_on:
@@ -27,11 +28,12 @@ services:
       flask create-db
       && python -m unittest discover -s api"
     environment:
+      - SERVER_NAME=localhost:5000
       - DATABASE_URL=postgresql+psycopg2://root:root@db/starwarsapi
       - FLASK_APP=api/app.py
       - FLASK_ENV=development
     ports:
-      - "8000:5000"
+      - "5000:5000"
     volumes:
       - .:/var/www/starwarsapi
     depends_on:
